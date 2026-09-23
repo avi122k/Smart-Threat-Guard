@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Threat Guard | Dashboard</title>
+
+
+    <style>
+
+        /* =========================
+           GLOBAL
+        ========================= */
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #172033;
+        }
+
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        .navbar {
+            height: 72px;
+
+            background: #0b1220;
+
+            color: white;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 5%;
+        }
+
+        .brand {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: #2563eb;
+
+            border-radius: 10px;
+
+            font-size: 21px;
+        }
+
+        .brand h2 {
+            font-size: 20px;
+        }
+
+        .brand p {
+            font-size: 11px;
+
+            color: #94a3b8;
+
+            margin-top: 3px;
+        }
+
+        .nav-links {
+            display: flex;
+
+            gap: 10px;
+        }
+
+        .nav-links a {
+            color: #cbd5e1;
+
+            text-decoration: none;
+
+            padding: 9px 15px;
+
+            border-radius: 7px;
+
+            font-size: 14px;
+        }
+
+        .nav-links a:hover,
+        .nav-links .active {
+            background: #1e3a8a;
+
+            color: white;
+        }
+
+
+        /* =========================
+           PAGE
+        ========================= */
+
+        .page {
+            width: 92%;
+
+            max-width: 1200px;
+
+            margin: 35px auto 60px;
+        }
+
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            font-size: 30px;
+
+            margin-bottom: 7px;
+        }
+
+        .page-header p {
+            color: #64748b;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           STAT CARDS
+        ========================= */
+
+        .stats-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 18px;
+
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 14px;
+
+            padding: 22px;
+
+            box-shadow:
+                0 5px 18px
+                rgba(15, 23, 42, 0.05);
+        }
+
+        .stat-top {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 15px;
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 10px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 20px;
+        }
+
+        .blue {
+            background: #eff6ff;
+        }
+
+        .red {
+            background: #fef2f2;
+        }
+
+        .green {
+            background: #f0fdf4;
+        }
+
+        .orange {
+            background: #fff7ed;
+        }
+
+        .stat-label {
+            color: #64748b;
+
+            font-size: 13px;
+
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+
+            font-weight: bold;
+
+            color: #111827;
+        }
+
+
+        /* =========================
+           DASHBOARD GRID
+        ========================= */
+
+        .dashboard-grid {
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 20px;
+
+            margin-bottom: 25px;
+        }
+
+        .panel {
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 14px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 5px 18px
+                rgba(15, 23, 42, 0.05);
+        }
+
+        .panel-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 25px;
+        }
+
+        .panel-header h2 {
+            font-size: 18px;
+        }
+
+        .panel-header span {
+            font-size: 12px;
+
+            color: #64748b;
+        }
+
+
+        /* =========================
+           THREAT OVERVIEW
+        ========================= */
+
+        .threat-chart {
+            display: flex;
+
+            align-items: center;
+
+            gap: 35px;
+        }
+
+        .donut {
+            width: 170px;
+            height: 170px;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            position: relative;
+
+            background:
+                conic-gradient(
+                    #dc2626 0deg,
+                    #dc2626 var(--phishing-angle),
+                    #22c55e var(--phishing-angle),
+                    #22c55e 360deg
+                );
+        }
+
+        .donut::after {
+            content: "";
+
+            position: absolute;
+
+            width: 105px;
+            height: 105px;
+
+            background: white;
+
+            border-radius: 50%;
+        }
+
+        .donut-text {
+            position: relative;
+
+            z-index: 2;
+
+            text-align: center;
+        }
+
+        .donut-text strong {
+            display: block;
+
+            font-size: 24px;
+        }
+
+        .donut-text span {
+            font-size: 11px;
+
+            color: #64748b;
+        }
+
+        .legend {
+            flex: 1;
+        }
+
+        .legend-item {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 18px;
+        }
+
+        .legend-left {
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+        }
+
+        .legend-dot {
+            width: 11px;
+            height: 11px;
+
+            border-radius: 50%;
+        }
+
+        .dot-red {
+            background: #dc2626;
+        }
+
+        .dot-green {
+            background: #22c55e;
+        }
+
+        .legend-name {
+            font-size: 13px;
+        }
+
+        .legend-value {
+            font-weight: bold;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           RISK METER
+        ========================= */
+
+        .average-risk {
+            text-align: center;
+
+            padding: 20px 0;
+        }
+
+        .average-risk-number {
+            font-size: 48px;
+
+            font-weight: bold;
+
+            color: #2563eb;
+        }
+
+        .average-risk-label {
+            color: #64748b;
+
+            font-size: 13px;
+
+            margin-top: 5px;
+        }
+
+        .risk-track {
+            height: 12px;
+
+            background: #e5e7eb;
+
+            border-radius: 20px;
+
+            margin-top: 25px;
+
+            overflow: hidden;
+        }
+
+        .risk-progress {
+            height: 100%;
+
+            width: 0%;
+
+            background: #2563eb;
+
+            border-radius: 20px;
+
+            transition: width 0.8s ease;
+        }
+
+
+        /* =========================
+           RECENT SCANS
+        ========================= */
+
+        .recent-panel {
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 14px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 5px 18px
+                rgba(15, 23, 42, 0.05);
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+
+            font-size: 12px;
+
+            color: #64748b;
+
+            padding: 13px;
+
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        td {
+            padding: 15px 13px;
+
+            font-size: 13px;
+
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .url-cell {
+            max-width: 300px;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+        }
+
+        .badge {
+            display: inline-block;
+
+            padding: 5px 9px;
+
+            border-radius: 20px;
+
+            font-size: 11px;
+
+            font-weight: bold;
+        }
+
+        .badge-danger {
+            background: #fef2f2;
+
+            color: #dc2626;
+        }
+
+        .badge-safe {
+            background: #f0fdf4;
+
+            color: #16a34a;
+        }
+
+        .risk-cell {
+            font-weight: bold;
+        }
+
+
+        /* =========================
+           LOADING / ERROR
+        ========================= */
+
+        .loading {
+            text-align: center;
+
+            padding: 50px;
+
+            color: #64748b;
+        }
+
+        .error {
+            display: none;
+
+            background: #fef2f2;
+
+            border: 1px solid #fecaca;
+
+            color: #b91c1c;
+
+            padding: 15px;
+
+            border-radius: 9px;
+
+            margin-bottom: 20px;
+
+            text-align: center;
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            background: #0b1220;
+
+            color: #94a3b8;
+
+            text-align: center;
+
+            padding: 25px;
+
+            font-size: 12px;
+        }
+
+        footer strong {
+            color: white;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 900px) {
+
+            .stats-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .navbar {
+                padding: 0 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .threat-chart {
+                flex-direction: column;
+            }
+
+            .page {
+                width: 94%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         NAVBAR
+    ========================= -->
+
+    <nav class="navbar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🛡️
+            </div>
+
+            <div>
+
+                <h2>Smart Threat Guard</h2>
+
+                <p>URL Security Intelligence</p>
+
+            </div>
+
+        </div>
+
+
+        <div class="nav-links">
+
+            <a href="index.html">
+                Scanner
+            </a>
+
+            <a href="dashboard.html"
+               class="active">
+                Dashboard
+            </a>
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- =========================
+         MAIN PAGE
+    ========================= -->
+
+    <main class="page">
+
+
+        <div class="page-header">
+
+            <h1>
+                Security Dashboard
+            </h1>
+
+            <p>
+                Overview of URL scans and detected threats.
+            </p>
+
+        </div>
+
+
+        <!-- Error -->
+
+        <div
+            id="error"
+            class="error"
+        ></div>
+
+
+        <!-- Loading -->
+
+        <div
+            id="loading"
+            class="loading"
+        >
+            Loading dashboard data...
+        </div>
+
+
+        <!-- Dashboard content -->
+
+        <div id="dashboardContent"
+             style="display:none;">
+
+
+            <!-- =========================
+                 STAT CARDS
+            ========================= -->
+
+            <section class="stats-grid">
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+
+                        <div>
+
+                            <div class="stat-label">
+                                Total Scans
+                            </div>
+
+                            <div
+                                id="totalScans"
+                                class="stat-value"
+                            >
+                                0
+                            </div>
+
+                        </div>
+
+                        <div class="stat-icon blue">
+                            🔍
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+
+                        <div>
+
+                            <div class="stat-label">
+                                Phishing Detected
+                            </div>
+
+                            <div
+                                id="phishingScans"
+                                class="stat-value"
+                            >
+                                0
+                            </div>
+
+                        </div>
+
+                        <div class="stat-icon red">
+                            ⚠️
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+
+                        <div>
+
+                            <div class="stat-label">
+                                Legitimate URLs
+                            </div>
+
+                            <div
+                                id="legitimateScans"
+                                class="stat-value"
+                            >
+                                0
+                            </div>
+
+                        </div>
+
+                        <div class="stat-icon green">
+                            ✓
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-top">
+
+                        <div>
+
+                            <div class="stat-label">
+                                Average Risk
+                            </div>
+
+                            <div
+                                id="averageRisk"
+                                class="stat-value"
+                            >
+                                0%
+                            </div>
+
+                        </div>
+
+                        <div class="stat-icon orange">
+                            📊
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =========================
+                 CHARTS
+            ========================= -->
+
+            <section class="dashboard-grid">
+
+
+                <!-- Threat overview -->
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <h2>
+                            Threat Overview
+                        </h2>
+
+                        <span>
+                            All scans
+                        </span>
+
+                    </div>
+
+
+                    <div class="threat-chart">
+
+
+                        <div
+                            id="donut"
+                            class="donut"
+                            style="--phishing-angle: 180deg;"
+                        >
+
+                            <div class="donut-text">
+
+                                <strong
+                                    id="threatPercentage"
+                                >
+                                    0%
+                                </strong>
+
+                                <span>
+                                    Phishing
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="legend">
+
+
+                            <div class="legend-item">
+
+                                <div class="legend-left">
+
+                                    <span
+                                        class="legend-dot dot-red"
+                                    ></span>
+
+                                    <span class="legend-name">
+                                        Phishing
+                                    </span>
+
+                                </div>
+
+                                <span
+                                    id="phishingLegend"
+                                    class="legend-value"
+                                >
+                                    0
+                                </span>
+
+                            </div>
+
+
+
+                            <div class="legend-item">
+
+                                <div class="legend-left">
+
+                                    <span
+                                        class="legend-dot dot-green"
+                                    ></span>
+
+                                    <span class="legend-name">
+                                        Legitimate
+                                    </span>
+
+                                </div>
+
+                                <span
+                                    id="legitimateLegend"
+                                    class="legend-value"
+                                >
+                                    0
+                                </span>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Risk overview -->
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <h2>
+                            Average Risk
+                        </h2>
+
+                        <span>
+                            Current history
+                        </span>
+
+                    </div>
+
+
+                    <div class="average-risk">
+
+                        <div
+                            id="averageRiskLarge"
+                            class="average-risk-number"
+                        >
+                            0%
+                        </div>
+
+                        <div class="average-risk-label">
+                            Average phishing probability
+                        </div>
+
+
+                        <div class="risk-track">
+
+                            <div
+                                id="riskProgress"
+                                class="risk-progress"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =========================
+                 RECENT SCANS
+            ========================= -->
+
+            <section class="recent-panel">
+
+
+                <div class="panel-header">
+
+                    <h2>
+                        Recent Scans
+                    </h2>
+
+                    <span>
+                        Latest 10 scans
+                    </span>
+
+                </div>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    URL
+                                </th>
+
+                                <th>
+                                    Prediction
+                                </th>
+
+                                <th>
+                                    Risk
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="recentScans">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =========================
+         FOOTER
+    ========================= -->
+
+    <footer>
+
+        <strong>
+            Smart Threat Guard
+        </strong>
+
+        — AI-Powered Phishing & Malicious URL Detection
+
+        <br><br>
+
+        Final Year Engineering Project
+
+    </footer>
+
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================= -->
+
+    <script>
+
+
+        const API =
+            "http://127.0.0.1:8000";
+
+
+        // ==================================
+        // Load Dashboard
+        // ==================================
+
+        async function loadDashboard() {
+
+            try {
+
+
+                // --------------------------
+                // Get statistics
+                // --------------------------
+
+                const statsResponse =
+                    await fetch(
+                        API + "/statistics"
+                    );
+
+
+                if (!statsResponse.ok) {
+
+                    throw new Error(
+                        "Unable to load statistics."
+                    );
+
+                }
+
+
+                const stats =
+                    await statsResponse.json();
+
+
+
+                // --------------------------
+                // Get history
+                // --------------------------
+
+                const historyResponse =
+                    await fetch(
+                        API + "/history"
+                    );
+
+
+                if (!historyResponse.ok) {
+
+                    throw new Error(
+                        "Unable to load scan history."
+                    );
+
+                }
+
+
+                const history =
+                    await historyResponse.json();
+
+
+
+                // --------------------------
+                // Statistics
+                // --------------------------
+
+                document.getElementById(
+                    "totalScans"
+                ).innerText =
+                    stats.total_scans;
+
+
+                document.getElementById(
+                    "phishingScans"
+                ).innerText =
+                    stats.phishing_scans;
+
+
+                document.getElementById(
+                    "legitimateScans"
+                ).innerText =
+                    stats.legitimate_scans;
+
+
+                document.getElementById(
+                    "averageRisk"
+                ).innerText =
+                    stats.average_risk + "%";
+
+
+                document.getElementById(
+                    "averageRiskLarge"
+                ).innerText =
+                    stats.average_risk + "%";
+
+
+                document.getElementById(
+                    "riskProgress"
+                ).style.width =
+                    stats.average_risk + "%";
+
+
+
+                // --------------------------
+                // Threat percentage
+                // --------------------------
+
+                let phishingPercentage = 0;
+
+
+                if (stats.total_scans > 0) {
+
+                    phishingPercentage =
+                        (
+                            stats.phishing_scans /
+                            stats.total_scans
+                        ) * 100;
+
+                }
+
+
+                phishingPercentage =
+                    Math.round(
+                        phishingPercentage
+                    );
+
+
+                document.getElementById(
+                    "threatPercentage"
+                ).innerText =
+                    phishingPercentage + "%";
+
+
+                document.getElementById(
+                    "phishingLegend"
+                ).innerText =
+                    stats.phishing_scans;
+
+
+                document.getElementById(
+                    "legitimateLegend"
+                ).innerText =
+                    stats.legitimate_scans;
+
+
+
+                // --------------------------
+                // Donut chart
+                // --------------------------
+
+                const angle =
+                    (
+                        phishingPercentage /
+                        100
+                    ) * 360;
+
+
+                document.getElementById(
+                    "donut"
+                ).style
+                  .setProperty(
+                      "--phishing-angle",
+                      angle + "deg"
+                  );
+
+
+
+                // --------------------------
+                // Recent scans
+                // --------------------------
+
+                const table =
+                    document.getElementById(
+                        "recentScans"
+                    );
+
+
+                table.innerHTML = "";
+
+
+                const scans =
+                    history.scans.slice(
+                        0,
+                        10
+                    );
+
+
+                if (scans.length === 0) {
+
+                    table.innerHTML = `
+                        <tr>
+                            <td colspan="4"
+                                style="text-align:center;color:#64748b;">
+                                No scans available yet.
+                            </td>
+                        </tr>
+                    `;
+
+                }
+
+
+                scans.forEach(
+                    function(scan) {
+
+
+                        const row =
+                            document.createElement(
+                                "tr"
+                            );
+
+
+                        const predictionClass =
+                            scan.prediction ===
+                            "PHISHING"
+                            ? "badge-danger"
+                            : "badge-safe";
+
+
+                        row.innerHTML = `
+
+                            <td
+                                class="url-cell"
+                                title="${escapeHTML(scan.url)}"
+                            >
+                                ${escapeHTML(scan.url)}
+                            </td>
+
+                            <td>
+
+                                <span
+                                    class="badge ${predictionClass}"
+                                >
+                                    ${scan.prediction}
+                                </span>
+
+                            </td>
+
+                            <td class="risk-cell">
+
+                                ${scan.risk_score}%
+
+                            </td>
+
+                            <td>
+
+                                ${scan.scan_date}
+
+                            </td>
+
+                        `;
+
+
+                        table.appendChild(row);
+
+                    }
+                );
+
+
+
+                // --------------------------
+                // Show dashboard
+                // --------------------------
+
+                document.getElementById(
+                    "loading"
+                ).style.display =
+                    "none";
+
+
+                document.getElementById(
+                    "dashboardContent"
+                ).style.display =
+                    "block";
+
+
+            }
+
+
+            catch (error) {
+
+
+                console.error(error);
+
+
+                document.getElementById(
+                    "loading"
+                ).style.display =
+                    "none";
+
+
+                const errorBox =
+                    document.getElementById(
+                        "error"
+                    );
+
+
+                errorBox.innerText =
+                    "Unable to connect to Smart Threat Guard. Make sure FastAPI is running.";
+
+
+                errorBox.style.display =
+                    "block";
+
+            }
+
+        }
+
+
+
+        // ==================================
+        // Basic HTML escaping
+        // ==================================
+
+        function escapeHTML(value) {
+
+            return String(value)
+
+                .replaceAll("&", "&amp;")
+
+                .replaceAll("<", "&lt;")
+
+                .replaceAll(">", "&gt;")
+
+                .replaceAll('"', "&quot;")
+
+                .replaceAll("'", "&#039;");
+
+        }
+
+
+
+        // ==================================
+        // Start Dashboard
+        // ==================================
+
+        loadDashboard();
+
+
+    </script>
+
+
+</body>
+
+</html>
