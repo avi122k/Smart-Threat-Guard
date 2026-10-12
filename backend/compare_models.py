@@ -1,5 +1,6 @@
 import pandas as pd
-
+import json
+import os
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -153,3 +154,31 @@ print("F1-Score:", round(best_model[4], 4))
 print("Accuracy:", round(best_model[1] * 100, 2), "%")
 
 print("\nModel comparison completed!")
+
+
+# --------------------------------
+# 8. Save measured results for Dashboard
+# --------------------------------
+
+comparison_output = []
+
+for result in results:
+    name, accuracy, precision, recall, f1 = result
+
+    comparison_output.append({
+        "model": name,
+        "accuracy": round(accuracy * 100, 2),
+        "precision": round(precision * 100, 2),
+        "recall": round(recall * 100, 2),
+        "f1_score": round(f1 * 100, 2)
+    })
+
+output_path = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "model_comparison.json"
+)
+
+with open(output_path, "w", encoding="utf-8") as file:
+    json.dump(comparison_output, file, indent=4)
+
+print("\nDashboard results saved to:", output_path)

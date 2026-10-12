@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Smart Threat Guard | Login</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+            background: #edf0f3;
+            color: #13202b;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+        .card {
+            width: 100%;
+            max-width: 440px;
+            padding: 32px;
+            background: #fafbfc;
+            border: 1px solid #c9d1d8;
+            border-radius: 12px;
+        }
+        h1 { margin-top: 0; }
+        .subtitle { color: #55646f; }
+        .tabs { display: flex; gap: 8px; margin: 24px 0; }
+        button, input { font: inherit; }
+        .tabs button {
+            flex: 1;
+            padding: 11px;
+            border: 1px solid #c9d1d8;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .tabs button.active, .submit {
+            background: #13202b;
+            color: white;
+        }
+        label { display: block; margin: 14px 0 6px; font-weight: 600; }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #c9d1d8;
+            border-radius: 6px;
+        }
+        .submit {
+            width: 100%;
+            padding: 13px;
+            margin-top: 22px;
+            border: 0;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .message { margin-top: 16px; overflow-wrap: anywhere; }
+        .message.error { color: #c0332b; }
+        .message.success { color: #1b7a57; }
+        .hidden { display: none; }
+        a { color: #13202b; }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <h1>Smart Threat Guard</h1>
+        <p class="subtitle">Sign in to scan suspicious URLs and view your scan history.</p>
+
+        <div class="tabs">
+            <button type="button" id="loginTab" class="active">Login</button>
+            <button type="button" id="registerTab">Create account</button>
+        </div>
+
+        <form id="authForm">
+            <div id="usernameField" class="hidden">
+                <label for="username">Username</label>
+                <input id="username" name="username" minlength="3" maxlength="50"
+                       autocomplete="username">
+            </div>
+
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required
+                   autocomplete="email">
+
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" required
+                   minlength="8" autocomplete="current-password">
+
+            <button class="submit" id="submitButton" type="submit">Login</button>
+        </form>
+
+        <p id="message" class="message" role="status" aria-live="polite"></p>
+        <p><a href="index.html">Back to scanner</a></p>
+    </main>
+
+    <script>
+        const API = "http://127.0.0.1:8000";
+        let mode = "login";
+
+        const $ = id => document.getElementById(id);
+
+        function setMode(nextMode) {
+            mode = nextMode;
+            const registering = mode === "register";
+
+            $("usernameField").classList.toggle("hidden", !registering);
+            $("username").required = registering;
+            $("password").autocomplete = registering
+                ? "new-password" : "current-password";
+            $("submitButton").textContent = registering
+                ? "Create account" : "Login";
+            $("loginTab").classList.toggle("active", !registering);
+            $("registerTab").classList.toggle("active", registering);
+            $("message").textContent = "";
+            $("message").className = "message";
+        }
+
+        $("loginTab").addEventListener("click", () => setMode("login"));
+        $("registerTab").addEventListener("click", () => setMode("register"));
+
+        $("authForm").addEventListener("submit", async event => {
+            event.preventDefault();
+
+            const message = $("message");
+            const button = $("submitButton");
+            button.disabled = true;
+            message.textContent = "Please wait...";
+            message.className = "message";
+
+            const payload = {
+                email: $("email").value.trim(),
+                password: $("password").value
+            };
+
+            if (mode === "register") {
+                payload.username = $("username").value.trim();
+            }
+
+            try {
+                const endpoint = mode === "register"
+                    ? "/auth/register" : "/auth/login";
+
+                const response = await fetch(API + endpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.detail || "Request failed.");
+                }
+
+                if (mode === "register") {
+                    message.textContent =
+                        "Account created. You can now log in.";
+                    message.className = "message success";
+                    setMode("login");
+                    return;
+                }
+
+                sessionStorage.setItem("stg_access_token", data.access_token);
+                sessionStorage.setItem(
+                    "stg_username", data.user.username
+                );
+
+                window.location.href = "index.html";
+            } catch (error) {
+                message.textContent = error.message ||
+                    "Could not connect to the API. Check that FastAPI is running.";
+                message.className = "message error";
+            } finally {
+                button.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
