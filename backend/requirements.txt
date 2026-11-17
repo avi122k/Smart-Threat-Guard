@@ -1,0 +1,9 @@
+
+fastapi
+uvicorn[standard]
+pydantic[email]
+reportlab
+PyJWT
+pwdlib[argon2]
+scikit-learn==1.9.0
+numpy
