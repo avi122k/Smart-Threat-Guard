@@ -57,9 +57,12 @@ create_table()
 # Allow frontend to communicate
 # --------------------------------
 
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://fishurl.netlify.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
